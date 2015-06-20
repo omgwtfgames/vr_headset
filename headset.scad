@@ -49,6 +49,15 @@ render = "both";	// options are "face", "front", "both", or "strap"
 
 make_printable = false;
 
+//EXTRAS
+
+//magnet
+add_magnet = true; //true or false, this will work like a click in google cardboard apps
+magnet_gap = 2;
+innder_magnet_diamiter = 19;
+outer_magnet_diamiter = 19; 
+outer_magnet_thickness = 5;
+//use whatever magnets you want, make sure to take print error into account if your printer isnt printing right
 
 
 
@@ -103,6 +112,26 @@ if (render=="strap"){
 		module nose(){
 				translate([0,0,-phone_width/2]) scale([nose_width,nose_depth*2,nose_height*2]) sphere(d=1, $fn=50);;
 		}
+		module outside_magnet(){
+			translate([phone_height/2,focal_length/2,outer_magnet_diamiter/2])difference(){
+				hull(){
+					sphere(d=outer_magnet_diamiter+4);
+					translate([0,0,-outer_magnet_diamiter]) sphere(d=outer_magnet_diamiter+4);
+				}
+				translate([outer_magnet_diamiter/2-outer_magnet_thickness,0,0]) hull(){
+					rotate([0,90,0]) cylinder(d=outer_magnet_diamiter, h=50);
+					translate([0,0,-outer_magnet_diamiter]) rotate([0,90,0]) cylinder(d=outer_magnet_diamiter, h=50);
+				}
+				translate([-100,-50,-50]) cube([100,100,100]);
+				translate([-50+outer_magnet_diamiter/2-outer_magnet_thickness-magnet_gap,0,0]) rotate([0,90,0]) cylinder(d=outer_magnet_diamiter, h=50);
+			}
+		}
+		
+		module inner_magnet(){
+			translate([phone_height/2,focal_length/2,outer_magnet_diamiter/2])
+				translate([-50+outer_magnet_diamiter/2-outer_magnet_thickness-magnet_gap,0,0]) rotate([0,90,0]) cylinder(d=outer_magnet_diamiter, h=50);
+		}
+		
 		module clip(){
 			rotate([-90,0,0]) translate([0,-5,0]) difference(){
 				rotate([45,0,0]) cube([10,50,5], center=true);
@@ -127,6 +156,9 @@ if (render=="strap"){
 			translate([0,focal_length/2,0]){
 				cube([phone_height+wall_thickness*2,focal_length,phone_width+wall_thickness*2], center=true);
 			}
+			if (add_magnet == true){
+				outside_magnet();
+			}
 		}
 		module front_taken(){
 					nose();
@@ -140,6 +172,9 @@ if (render=="strap"){
 				translate([-phone_height/2,0,phone_width/2+wall_thickness-2]) linear_extrude(height=3) {
 					text(phone_name);
 				}
+			}
+			if (add_magnet == true){
+				inner_magnet();
 			}
 		}
 		
