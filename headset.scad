@@ -44,12 +44,19 @@ your_name = "Benjamin";
 phone_name = "Nexus 6";
 
 
-render = "both";	// options are "face", "front", "both", or "strap"
+render = "front";	// options are "face", "front", "both", or "strap"
 
 
 make_printable = false;
 
 //EXTRAS
+
+//head strap
+head_strap_mount = true;
+head_strap_width = 50;
+head_strap_mount_thickness = 10;
+head_strap_thickness = 2.5;
+
 
 //magnet
 add_magnet = true; //true or false, this will work like a click in google cardboard apps
@@ -108,7 +115,23 @@ if (render=="strap"){
 
 
 //modules
-		//front
+		module head_strap_mount(){
+			module taken(){
+				translate([(phone_height/2)+wall_thickness+head_strap_thickness,head_strap_mount_thickness/2,0]) cube([head_strap_thickness,50,head_strap_width], center=true);
+				translate([(phone_height/2)+wall_thickness+head_strap_thickness*3,head_strap_mount_thickness/2,0]) cube([head_strap_thickness,50,head_strap_width], center=true);
+			}
+			module added(){
+				translate([(phone_height/2)+wall_thickness+head_strap_thickness*2.5,head_strap_mount_thickness/2,0]) cube([head_strap_thickness*5,head_strap_mount_thickness,head_strap_width+head_strap_mount_thickness], center=true);
+			}
+			module head_strap_fin(){
+				difference(){
+					added();
+					taken();
+				}
+			}
+			head_strap_fin();
+			mirror([1,0,0]) head_strap_fin();
+		}
 		module nose(){
 				translate([0,0,-phone_width/2]) scale([nose_width,nose_depth*2,nose_height*2]) sphere(d=1, $fn=50);;
 		}
@@ -159,6 +182,10 @@ if (render=="strap"){
 			if (add_magnet == true){
 				outside_magnet();
 			}
+			if (head_strap_mount == true){
+				head_strap_mount();
+			}
+					
 		}
 		module front_taken(){
 					nose();
