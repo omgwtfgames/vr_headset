@@ -13,17 +13,17 @@
 
 
 //phone settings
-phone_height = 159.3;
-phone_width = 83;
-phone_thickness = 5; //this is only if you want the printed bands
+phone_height = 109.591;
+phone_width = 61.6449;
+phone_thickness = 8.636; //this is only if you want the printed bands
 
 
 //face_settings
 face_curve = phone_height/2;
-eye_gap = 68;  //ipd
-nose_width = 40;
-nose_depth = 30;
-nose_height = 30;
+eye_gap = 62;  //ipd
+nose_width = 30;
+nose_depth = 20;
+nose_height = 20;
 
 //print settings
 wall_thickness = 3;
@@ -33,21 +33,21 @@ layer_height=.5;
 stretch_strength = 3;
 
 //lense settings
-lense_diamiter = 50;
+lense_diamiter = 25;
 lense_thickness = 15;
 outer_thickness= 2;
-focal_length= 45;
+focal_length= 40;
 face_plate_thickness = 5;
 
 //label it
-your_name = "Benjamin";
-phone_name = "Nexus 6";
+your_name = "";
+phone_name = "Nexus 5";
 
 
-render = "front";	// options are "face", "front", "both", or "strap"
+render = "face";	// options are "face", "front", "both", or "strap"
 
 
-make_printable = false;
+make_printable = true;
 
 //EXTRAS
 
