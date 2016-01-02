@@ -32,11 +32,11 @@ layer_height=.5;
 //strap settings
 stretch_strength = 3;
 
-//lense settings
-lense_diamiter = 25;
-lense_thickness = 15;
+//lens settings
+lens_diameter = 37;
+lens_thickness = 15;
 outer_thickness= 2;
-focal_length= 40;
+focal_length= 45;
 face_plate_thickness = 5;
 
 //label it
@@ -44,8 +44,10 @@ your_name = "";
 phone_name = "Nexus 5";
 
 
-render = "face";	// options are "face", "front", "both", or "strap"
-
+render = "both";	// options are "face", "front", "both", or "strap"
+//render = "front";
+//render = "face";
+//render = "strap";
 
 make_printable = true;
 
@@ -61,8 +63,8 @@ head_strap_thickness = 2.5;
 //magnet
 add_magnet = true; //true or false, this will work like a click in google cardboard apps
 magnet_gap = 2;
-innder_magnet_diamiter = 19;
-outer_magnet_diamiter = 19; 
+inner_magnet_diameter = 19;
+outer_magnet_diameter = 19; 
 outer_magnet_thickness = 5;
 //use whatever magnets you want, make sure to take print error into account if your printer isnt printing right
 
@@ -91,7 +93,7 @@ module face() {
 
 //functions
 
-if (render=="front" || render=="both") {
+if (render=="front") {
 	if (make_printable == true){
 		rotate([90,0,0]) front();
 	}
@@ -100,7 +102,7 @@ if (render=="front" || render=="both") {
 	}
 }
 
-if (render=="face" || render=="both") {
+if (render=="face") {
 	if (make_printable == true){
 		rotate([-90,0,0]) face();
 	}
@@ -108,6 +110,21 @@ if (render=="face" || render=="both") {
 		face();
 	}
 }
+
+if (render=="both") {
+    face_part_offset = [0, 0, 0];
+	if (make_printable == true){
+		rotate([90,0,0]) front();
+        translate(face_part_offset) {
+            rotate([90,0,0]) face();
+        }
+	}
+	else{
+		front();
+        translate(face_part_offset) face();
+	}
+}
+
 
 if (render=="strap"){
 			strap();
@@ -133,26 +150,32 @@ if (render=="strap"){
 			mirror([1,0,0]) head_strap_fin();
 		}
 		module nose(){
-				translate([0,0,-phone_width/2]) scale([nose_width,nose_depth*2,nose_height*2]) sphere(d=1, $fn=50);;
+				translate([0,0,-phone_width/2]) scale([nose_width,nose_depth*2,nose_height*2]) sphere(d=1, $fn=50);
 		}
 		module outside_magnet(){
-			translate([phone_height/2,focal_length/2,outer_magnet_diamiter/2])difference(){
+			translate([
+            phone_height/2,
+            focal_length/2,
+            outer_magnet_diameter/2]) 
+            difference(){
 				hull(){
-					sphere(d=outer_magnet_diamiter+4);
-					translate([0,0,-outer_magnet_diamiter]) sphere(d=outer_magnet_diamiter+4);
+					sphere(d=outer_magnet_diameter+4);
+					translate([0,0,-outer_magnet_diameter]) sphere(d=outer_magnet_diameter+4);
 				}
-				translate([outer_magnet_diamiter/2-outer_magnet_thickness,0,0]) hull(){
-					rotate([0,90,0]) cylinder(d=outer_magnet_diamiter, h=50);
-					translate([0,0,-outer_magnet_diamiter]) rotate([0,90,0]) cylinder(d=outer_magnet_diamiter, h=50);
+				translate([outer_magnet_diameter/2-outer_magnet_thickness,0,0]) hull(){
+					rotate([0,90,0]) cylinder(d=outer_magnet_diameter, h=50);
+					translate([0,0,-outer_magnet_diameter]) rotate([0,90,0]) cylinder(d=outer_magnet_diameter, h=50);
 				}
 				translate([-100,-50,-50]) cube([100,100,100]);
-				translate([-50+outer_magnet_diamiter/2-outer_magnet_thickness-magnet_gap,0,0]) rotate([0,90,0]) cylinder(d=outer_magnet_diamiter, h=50);
+				translate([-50+outer_magnet_diameter/2-outer_magnet_thickness-magnet_gap,0,0]) rotate([0,90,0]) {
+                    cylinder(d=outer_magnet_diameter, h=50);
+                }
 			}
 		}
 		
 		module inner_magnet(){
-			translate([phone_height/2,focal_length/2,outer_magnet_diamiter/2])
-				translate([-50+outer_magnet_diamiter/2-outer_magnet_thickness-magnet_gap,0,0]) rotate([0,90,0]) cylinder(d=outer_magnet_diamiter, h=50);
+			translate([phone_height/2,focal_length/2,outer_magnet_diameter/2])
+				translate([-50+outer_magnet_diameter/2-outer_magnet_thickness-magnet_gap,0,0]) rotate([0,90,0]) cylinder(d=outer_magnet_diameter, h=50);
 		}
 		
 		module clip(){
@@ -215,17 +238,17 @@ if (render=="strap"){
 					nose();
 			translate([0,(-focal_length/2)-face_plate_thickness,0]) cube([phone_height,focal_length,phone_width], center=true);
 			translate([0,-face_curve-face_plate_thickness,-phone_width/2-wall_thickness-1]) cylinder(h=phone_width*2, r=face_curve);
-			translate([eye_gap/2,(-lense_thickness/2)-(face_plate_thickness/2),0]) lense();
-			mirror([1,0,0]) translate([eye_gap/2,(-lense_thickness/2)-(face_plate_thickness/2),0]) lense();
+			translate([eye_gap/2,(-lens_thickness/2)-(face_plate_thickness/2),0]) lens();
+			mirror([1,0,0]) translate([eye_gap/2,(-lens_thickness/2)-(face_plate_thickness/2),0]) lens();
 			translate([-phone_height/2,-10,phone_width/2+wall_thickness-2]) linear_extrude(height=3) {
 					text(your_name);
 				}
 		}
 		
-		//lenses
-		module lense(){
+		//lenss
+		module lens(){
 			hull(){
-				translate([0,lense_thickness/2,0]) scale([lense_diamiter-3,lense_thickness,lense_diamiter-3]) sphere(d=1, $fn=50);
-				translate([0,(lense_thickness/2)-outer_thickness/2,0]) rotate([-90,0,0]) cylinder(d=lense_diamiter, h=outer_thickness, $fn=50);
+				translate([0,lens_thickness/2,0]) scale([lens_diameter-3,lens_thickness,lens_diameter-3]) sphere(d=1, $fn=50);
+				translate([0,(lens_thickness/2)-outer_thickness/2,0]) rotate([-90,0,0]) cylinder(d=lens_diameter, h=outer_thickness, $fn=50);
 			}
 		}
